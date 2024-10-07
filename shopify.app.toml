@@ -1,0 +1,29 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "a0685559fda3ccbb37b25b7a71eab4bf"
+name = "ebay-store"
+handle = "ebay-store"
+application_url = "https://alot-guests-distributed-south.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "iacdevtest.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products, write_inventory, read_inventory, read_products"
+
+[auth]
+redirect_urls = [
+  "https://alot-guests-distributed-south.trycloudflare.com/auth/callback",
+  "https://alot-guests-distributed-south.trycloudflare.com/auth/shopify/callback",
+  "https://alot-guests-distributed-south.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-01"
+
+[pos]
+embedded = false

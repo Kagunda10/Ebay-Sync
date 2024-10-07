@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Session {
+  id          String    @id
+  shop        String
+  state       String
+  isOnline    Boolean   @default(false)
+  scope       String?
+  expires     DateTime?
+  accessToken String
+  userId      BigInt?
+}
+
+model Shop {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  accessToken String?
+  products    Product[]
+  activities  RecentActivity[]
+  settings    Setting[]
+  jobs        Job[]
+}
+
+model Product {
+  id             Int       @id @default(autoincrement())
+  SKU            String
+  URL            String
+  condition      String?
+  price          Float?
+  quantity       Int?
+  markup         Int?
+  notifyLowStock Boolean   @default(false)
+  shopId         Int
+  updatedAt      DateTime? @updatedAt
+  shop           Shop      @relation(fields: [shopId], references: [id])
+
+  @@unique([SKU, shopId])
+}
+
+model RecentActivity {
+  id          Int      @id @default(autoincrement())
+  type        String
+  createdAt   DateTime @default(now())
+  description String
+  shopId      Int
+  shop        Shop     @relation(fields: [shopId], references: [id])
+}
+
+model Setting {
+  id                   Int     @id @default(autoincrement())
+  frequency            String
+  markup               Int
+  concurrentScrapeSync Boolean
+  lowStockAlert        Boolean
+  emails               String  @default("[]")
+  shopId               Int
+  shop                 Shop    @relation(fields: [shopId], references: [id])
+}
+
+model Job {
+  id        String   @id @default(uuid())
+  shopId    Int
+  status    String   // 'waiting', 'active', 'completed', 'failed'
+  progress  Int      @default(0)
+  errors    String[]  // Add this line
+  batchesCompleted Int     @default(0) // Add this field
+  totalBatches    Int                  // Add this field
+  createdAt DateTime @default(now())
+  startedAt DateTime?
+  updatedAt DateTime @updatedAt
+
+  shop      Shop     @relation(fields: [shopId], references: [id])
+}
